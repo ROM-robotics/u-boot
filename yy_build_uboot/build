@@ -1,0 +1,31 @@
+#!/bin/bash
+
+my_qemu_path="x-tools/arm-unknown-linux-gnueabi/bin/"
+my_qemu_cc="arm-unknown-linux-gnueabi-"
+my_qemu_config="qemu_arm_defconfig"
+
+my_rpi4_path="x-tools/aarch64-rpi4-linux-gnu/bin/"
+my_rpi4_cc="aarch64-rpi4-linux-gnu-"
+my_rpi4_config="rpi_4_defconfig"
+
+my_arch="arm"
+
+PATH=${HOME}/${my_rpi4_path}:$PATH
+export CROSS_COMPILE=${my_rpi4_cc}
+export ARCH=${my_arch}
+
+echo "Building............."
+make rpi_4_defconfig CROSS_COMPILE=${my_rpi4_cc}
+make menuconfig
+make CROSS_COMPILE=${my_rpi4_cc}
+
+echo "Moving Output ..to $1"
+mkdir $1
+mv u-boot* System.map $1
+
+echo "**************"
+echo " QEMU example"
+echo "**************"
+echo "qemu-system-arm -M virt -nographic -no-reboot -bios $1/u-boot.bin"
+
+
